@@ -1,0 +1,50 @@
+{
+  "realm": "curso-springboot",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "clients": [
+    {
+      "clientId": "angular-client",
+      "name": "angular-client",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://localhost:4200/*"],
+      "webOrigins": ["http://localhost:4200"],
+      "attributes": { "pkce.code.challenge.method": "S256" }
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "ADMIN", "description": "Puede crear, editar y eliminar clientes" },
+      { "name": "USER", "description": "Solo puede consultar clientes" }
+    ]
+  },
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Springs",
+      "email": "alice@example.com",
+      "credentials": [{ "type": "password", "value": "alice123", "temporary": false }],
+      "realmRoles": ["USER"]
+    },
+    {
+      "username": "admin_user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@example.com",
+      "credentials": [{ "type": "password", "value": "admin123", "temporary": false }],
+      "realmRoles": ["ADMIN"]
+    }
+  ]
+}

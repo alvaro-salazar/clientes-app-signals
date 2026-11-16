@@ -20,6 +20,7 @@
     "@fortawesome/angular-fontawesome": "^5.1.0",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@ng-bootstrap/ng-bootstrap": "^21.0.0",
+    "angular-oauth2-oidc": "^22.0.2",
     "bootstrap": "^5.3.9",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.26.25",

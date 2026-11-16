@@ -3,21 +3,35 @@ services:
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: curso_springboot
-      POSTGRES_PASSWORD: a1b2c3d4
       POSTGRES_USER: devdb
-    networks: [red-backend-app]
+      POSTGRES_PASSWORD: a1b2c3d4
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devdb -d curso_springboot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8090
+    ports: ["8090:8090"]
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
 
   cliente-service:
-    image: alvarosalazar/cliente-service:codelab-06
-    ports: ['8080:8080']
-    depends_on: [postgres]
+    image: alvarosalazar/cliente-service:keycloak
+    ports: ["8080:8080"]
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
-      DB_URL: jdbc:postgresql://postgres/curso_springboot
+      DB_URL: jdbc:postgresql://postgres:5432/curso_springboot
       DB_USERNAME: devdb
       DB_PASSWORD: a1b2c3d4
       JPA_DDL: create-drop
-    profiles: [app]
-    networks: [red-backend-app]
-
-networks:
-  red-backend-app:
+      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/curso-springboot
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8090/realms/curso-springboot/protocol/openid-connect/certs

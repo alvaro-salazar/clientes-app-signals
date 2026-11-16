@@ -1,36 +1,48 @@
-# clientes-app — fin del codelab 1
+# clientes-app — fin del codelab 2
 
-Estado del proyecto al terminar **Angular desde Cero: una Aplicación de Clientes con Señales**
-(`angular-crud-signals-desde-cero`).
-
-Esta rama existe para quien quiera empezar el codelab 2 sin haber hecho el 1, o para comparar su
-propio avance con el estado esperado.
+Estado del proyecto al terminar **Inicio de Sesión con Keycloak: PKCE, Interceptor y Roles**
+(`angular-login-keycloak-signals`), que es el último de la línea corta.
 
 ## Qué hay aquí
 
 | Ruta | Qué es |
 |---|---|
-| `clientes-app/` | La aplicación Angular 22: CRUD completo de clientes con señales |
-| `compose.yml` | PostgreSQL y `cliente-service:codelab-06`, el servicio **sin** protección |
-
-La carpeta de trabajo reproduce la del codelab: el `compose.yml` va **al lado** de `clientes-app`,
-no dentro.
+| `clientes-app/` | La aplicación Angular 22 con sesión real: login PKCE, interceptor, guarda y roles |
+| `compose.yml` | PostgreSQL, Keycloak y `cliente-service:keycloak`, el servicio que **sí** valida tokens |
+| `keycloak/realm-export.json` | El realm `curso-springboot` con sus clients, roles y usuarios de prueba |
 
 ## Cómo levantarlo
 
-Node 22.22.3 o posterior, 24.15.0 o posterior, o 26. Versiones anteriores fallan con `EBADENGINE`.
+Node 22.22.3 o posterior, 24.15.0 o posterior, o 26.
 
 ```bash
-docker compose --profile app up -d     # servicio de clientes en el 8080
+docker compose up -d                   # postgres + keycloak (8090) + cliente-service (8080)
 cd clientes-app
 npm install
 ng serve                               # aplicación en el 4200
 ```
 
-El servicio tarda un par de minutos en responder la primera vez: crea las tablas y siembra
-12 clientes y 8 regiones. Hasta entonces la lista aparece vacía.
+Usuarios de prueba del realm:
 
-## Lo que sigue
+| Usuario | Contraseña | Rol | Puede crear clientes |
+|---|---|---|---|
+| `alice` | `alice123` | USER | no — el botón no aparece y el servidor responde 403 |
+| `admin_user` | `admin123` | ADMIN | sí |
 
-El codelab 2 es **Inicio de Sesión con Keycloak: PKCE, Interceptor y Roles**
-(`angular-login-keycloak-signals`), y su estado final está en la rama `codelab/clientes-02-fin`.
+## Qué cambió respecto al codelab 1
+
+```bash
+git diff codelab/clientes-01-fin codelab/clientes-02-fin -- clientes-app/src
+```
+
+Aparecen el directorio `auth/` completo, el `app.config.ts` con la configuración de OAuth, la
+cabecera, las rutas con guarda y el botón de crear condicionado al rol. **`cliente-service.ts` no
+aparece en ese diff**, y esa es la lección del codelab: la autenticación quedó fuera del servicio
+de datos.
+
+## El otro lado
+
+Validar la firma del token, sacar los roles de `realm_access` y cerrar cada operación con
+`@PreAuthorize` es lo que trae hecha la imagen `cliente-service:keycloak`. Ese código se escribe a
+mano en **Spring Boot 07 — OAuth2 y Keycloak** (`spring-boot-07-oauth2-keycloak`), que pertenece a
+la serie de Spring Boot y parte de su propio proyecto.

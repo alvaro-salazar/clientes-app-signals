@@ -4,6 +4,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faPenToSquare, faTrash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import { ClienteService } from '../cliente-service';
+import { AuthService } from '../../auth/auth-service';
 import { Cliente } from '../cliente';
 import { Region } from '../region';
 
@@ -18,6 +19,7 @@ export class Clientes implements OnInit {
   // El servicio se declara protegido porque la plantilla lo usa
   // directamente: no se guarda una copia local de la lista.
   protected clienteService = inject(ClienteService);
+  protected auth = inject(AuthService);
 
   protected readonly faPenToSquare = faPenToSquare;
   protected readonly faTrash = faTrash;
